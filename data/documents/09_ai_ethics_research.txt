@@ -1,0 +1,99 @@
+AI ETHICS: PRINCIPLES, CHALLENGES, AND GOVERNANCE
+
+1. INTRODUCTION
+AI ethics is the field of study concerned with the moral dimensions of artificial intelligence systems — including their design, development, deployment, and impact on individuals and society. As AI systems become more powerful and pervasive, ethical considerations have moved from academic debate to urgent regulatory and business priority.
+
+Key question: How do we build AI systems that are fair, accountable, transparent, and beneficial to all of humanity?
+
+2. CORE ETHICAL PRINCIPLES
+
+2.1 Fairness
+AI systems should not discriminate against individuals or groups based on protected attributes such as race, gender, age, religion, disability, or national origin.
+- Demographic Parity: The system produces equal outcomes across groups.
+- Equal Opportunity: True positive rates are equal across groups.
+- Calibration: Predicted probabilities are equally accurate across groups.
+Challenge: These fairness metrics are often mathematically incompatible with each other.
+
+2.2 Transparency and Explainability
+People affected by AI decisions should be able to understand how and why those decisions were made.
+- Interpretable Models: Decision trees, linear regression — inherently understandable.
+- Post-hoc Explanation: SHAP (SHapley Additive exPlanations), LIME (Local Interpretable Model-agnostic Explanations) — explain black-box models after the fact.
+- Right to Explanation: The EU's GDPR grants individuals the right to an explanation of automated decisions that significantly affect them.
+
+2.3 Accountability
+There must be clear lines of responsibility for the outcomes of AI systems. When an AI causes harm, it must be possible to identify who is responsible: the developer, the deployer, or the user?
+Mechanisms: Audit trails, model cards, documentation requirements, legal frameworks.
+
+2.4 Privacy
+AI systems often require large amounts of data, raising significant privacy concerns.
+- Data Minimization: Collect only what is strictly necessary.
+- Differential Privacy: Mathematical technique that adds calibrated noise to prevent re-identification of individuals in aggregated data.
+- Federated Learning: Train models on decentralized data without centralizing sensitive information.
+- GDPR (EU), CCPA (California): Legal frameworks governing data collection and use.
+
+2.5 Safety and Robustness
+AI systems should perform reliably and safely, including under adversarial conditions.
+- Adversarial Attacks: Small, carefully crafted perturbations to inputs that cause model failure (e.g., an image classifier mislabeling a stop sign).
+- Distribution Shift: Performance degrades when deployment data differs from training data.
+- Fail-Safe Design: Systems should fail gracefully and default to safe behavior.
+
+2.6 Human Autonomy and Oversight
+AI should augment human decision-making, not replace it in high-stakes domains without adequate oversight.
+- Human-in-the-Loop: Humans review AI decisions before they take effect.
+- Human-on-the-Loop: Humans monitor AI in real time and can intervene.
+High-stakes domains requiring oversight: healthcare diagnosis, criminal justice, credit decisions, autonomous weapons.
+
+3. ALGORITHMIC BIAS
+
+3.1 Sources of Bias
+- Historical Bias: Training data reflects historical inequalities (e.g., hiring models trained on biased historical hiring data).
+- Representation Bias: Certain groups are underrepresented in training data.
+- Measurement Bias: Proxy variables used as targets introduce bias (e.g., using "criminal recidivism" as a proxy for risk when arrest rates themselves are biased).
+- Feedback Loops: Biased predictions influence future data collection, amplifying the bias over time.
+
+3.2 Real-World Examples
+- COMPAS Recidivism Algorithm: Found to falsely flag Black defendants as high-risk at twice the rate of white defendants.
+- Facial Recognition: Studies showed significantly higher error rates for darker-skinned women vs. lighter-skinned men.
+- NLP Models: Language models encode and amplify gender and racial stereotypes present in training data.
+- Resume Screening: Amazon's AI hiring tool was found to penalize resumes containing the word "women's."
+
+3.3 Mitigation Strategies
+- Diverse training data collection and curation.
+- Fairness constraints in model training.
+- Regular bias audits throughout the system lifecycle.
+- Inclusive teams that bring diverse perspectives to AI development.
+
+4. AI GOVERNANCE AND REGULATION
+
+4.1 EU AI Act (2024)
+The world's first comprehensive AI regulation framework.
+- Risk-based approach: AI systems classified as Unacceptable Risk (banned), High Risk (strict requirements), Limited Risk (transparency obligations), Minimal Risk (no regulation).
+- High-risk AI includes: biometric identification, critical infrastructure, education, employment, essential services, law enforcement, migration, administration of justice.
+- Requires: Risk management systems, data governance, technical documentation, transparency, human oversight, accuracy and robustness.
+
+4.2 US Approach
+- Executive Order on Safe, Secure, and Trustworthy AI (2023): Requires safety testing for powerful AI; promotes watermarking of AI-generated content; directs federal agencies to develop AI governance frameworks.
+- NIST AI Risk Management Framework: Voluntary framework for managing AI risks (Govern, Map, Measure, Manage).
+
+4.3 China
+- Generative AI Regulations (2023): Providers must register with authorities, conduct security assessments, label AI-generated content, prevent generation of illegal content.
+
+5. AI SAFETY AND ALIGNMENT
+
+5.1 The Alignment Problem
+How do we ensure that AI systems pursue goals that are actually beneficial to humans? As AI becomes more capable, misaligned goals — even benign ones — could lead to harmful outcomes.
+
+5.2 Approaches to Alignment
+- RLHF (Reinforcement Learning from Human Feedback): Train models to align with human preferences; used in ChatGPT, Claude, and most modern LLMs.
+- Constitutional AI: Models critique and revise their own outputs according to a set of principles.
+- Interpretability Research: Understanding what is happening inside models to detect misalignment early.
+
+5.3 Existential Risk Considerations
+Some researchers argue that sufficiently advanced misaligned AI could pose existential risks. This remains controversial and debated within the AI community.
+
+6. RESPONSIBLE AI DEVELOPMENT PRACTICES
+- Model Cards: Structured documentation of a model's intended use, performance characteristics, and limitations.
+- Datasheets for Datasets: Documentation of how datasets were collected, labeled, and validated.
+- Red Teaming: Deliberately attempting to elicit harmful or biased outputs to find vulnerabilities before deployment.
+- Staged Rollout: Deploying to limited audiences first to monitor for unintended harms.
+- Continuous Monitoring: Tracking model behavior in production for drift, bias, and safety violations.

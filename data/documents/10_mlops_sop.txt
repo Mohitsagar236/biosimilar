@@ -1,0 +1,142 @@
+MLOPS STANDARD OPERATING PROCEDURE (SOP)
+
+Document ID: MLOPS-SOP-001
+Version: 2.1
+Owner: ML Platform Team
+Last Reviewed: 2025-01-15
+
+1. PURPOSE
+This SOP defines the end-to-end standard operating procedure for developing, deploying, and maintaining machine learning models in production at scale. It covers the full MLOps lifecycle from experiment tracking through model retirement.
+
+2. SCOPE
+This procedure applies to all ML models deployed to production systems, including predictive models, recommendation systems, and AI-powered features.
+
+3. EXPERIMENT TRACKING
+
+3.1 Tools
+All experiments must be logged using MLflow or Weights & Biases. Experiments without logged artifacts cannot be promoted to production.
+
+3.2 Required Logged Artifacts
+- All hyperparameters
+- Training and validation metrics (loss, accuracy, AUC, F1 as appropriate)
+- Training data version (dataset hash or DVC tag)
+- Model binary and associated preprocessing pipeline
+- Confusion matrix / calibration curves for classification models
+- Feature importance plots
+
+3.3 Naming Convention
+Experiments: {team}-{project}-{YYYY-MM-DD}-{description}
+Example: ml-platform-fraud-2025-01-15-lgbm-v3
+
+4. MODEL REGISTRY
+
+4.1 Stages
+Staging: Candidate models passing offline evaluation. Full integration testing required before promotion.
+Production: Approved models serving live traffic. Rollback plan must be documented.
+Archived: Superseded models; retained for audit purposes for 2 years.
+
+4.2 Promotion Criteria (Staging → Production)
+- Meets or exceeds baseline model performance on held-out test set.
+- Bias audit passed: No protected group shows performance degradation > 5% vs. overall.
+- Latency requirement met: p95 inference latency < 200ms for real-time endpoints.
+- Data drift check: Current production data is within acceptable distribution distance of training data.
+- Human sign-off: Model card reviewed and approved by data science lead and product owner.
+
+4.3 Model Card Requirements
+Every production model must have a model card containing:
+- Model description and intended use cases
+- Training data summary
+- Performance metrics on test set (overall and per-segment)
+- Known limitations and failure modes
+- Ethical considerations and bias analysis results
+- Point of contact for production issues
+
+5. CI/CD PIPELINE FOR ML
+
+5.1 Code Quality Gates
+All ML code changes must pass:
+- Unit tests (coverage ≥ 80%)
+- Data validation tests (schema check, range checks, null rate checks)
+- Training pipeline smoke test (short training run on small data sample)
+- Linting (flake8 / ruff, max line length 120)
+- Type checking (mypy strict mode)
+
+5.2 Automated Pipeline Steps
+Step 1: Data validation — schema and quality checks on incoming data.
+Step 2: Feature engineering — reproducible feature pipeline with versioned transformers.
+Step 3: Model training — parameterized training run logged to experiment tracker.
+Step 4: Model evaluation — comparison against current production model.
+Step 5: Conditional promotion — automatic staging promotion if performance threshold met.
+Step 6: Integration tests — API response validation, load testing.
+Step 7: Deployment — rolling deployment with canary (5% traffic) before full promotion.
+
+6. MONITORING AND ALERTING
+
+6.1 Data Drift Monitoring
+- Check daily: Input feature distributions vs. training baseline using Population Stability Index (PSI).
+- Alert threshold: PSI > 0.2 for any input feature triggers investigation.
+- Automatic retraining trigger: PSI > 0.25 or model performance degradation > 10%.
+
+6.2 Model Performance Monitoring
+- Real-time metrics: prediction latency, error rates, throughput.
+- Delayed ground truth metrics: computed once labels become available (typically 1–30 days post-prediction depending on use case).
+- Dashboard: Grafana dashboard per model showing all KPIs.
+
+6.3 Alert Escalation
+Level 1 (Warning): Slack notification to on-call ML engineer.
+Level 2 (Critical): PagerDuty alert + automatic traffic rollback to previous model version.
+Level 3 (Outage): Incident created, engineering lead notified, status page updated.
+
+6.4 On-Call Rotation
+- Primary on-call: Rotates weekly among ML engineers.
+- Escalation contact: ML Platform Lead.
+- Runbook location: Internal Confluence page "MLOps Runbooks."
+
+7. RETRAINING POLICY
+
+7.1 Scheduled Retraining
+Models must be retrained on a defined schedule based on data velocity:
+- High-frequency data (e.g., click streams): Retrain weekly.
+- Medium-frequency data (e.g., transactional): Retrain monthly.
+- Low-frequency data (e.g., annual surveys): Retrain quarterly or on event trigger.
+
+7.2 Triggered Retraining
+Automatic retraining is triggered by:
+- Data drift alert (PSI > 0.25).
+- Performance degradation alert.
+- Significant change in upstream data schema.
+
+7.3 Retraining Validation
+Retrained models undergo the same promotion pipeline as new models. They cannot be auto-promoted without passing all quality gates.
+
+8. MODEL RETIREMENT
+
+8.1 Deprecation Notice
+Models scheduled for retirement must receive 30-day advance notice to all dependent teams.
+
+8.2 Retirement Checklist
+- All consumers have migrated to the replacement model or alternative solution.
+- Archived version is preserved in the model registry.
+- Monitoring dashboards and alerts are disabled.
+- Documentation is updated to reflect retirement.
+
+9. INCIDENT RESPONSE
+
+9.1 Severity Definitions
+SEV-1: Model producing incorrect predictions at scale causing user harm or significant business loss.
+SEV-2: Model unavailable or severely degraded for > 15 minutes.
+SEV-3: Performance degradation within acceptable bounds; investigation required.
+
+9.2 Response Time SLA
+SEV-1: Acknowledge within 15 minutes; mitigation within 60 minutes.
+SEV-2: Acknowledge within 30 minutes; mitigation within 2 hours.
+SEV-3: Acknowledge within 4 hours; investigation within 24 hours.
+
+9.3 Post-Incident Review
+All SEV-1 and SEV-2 incidents require a post-incident review within 5 business days. The review must include: timeline, root cause, impact assessment, corrective actions, and preventive measures.
+
+10. COMPLIANCE AND AUDIT
+- All production model decisions must be logged for a minimum of 3 years.
+- Model logs must be immutable and tamper-evident.
+- Quarterly audits of model fairness metrics are required for models operating in regulated domains.
+- External auditors must be granted read-only access to model cards, experiment logs, and bias reports on request.

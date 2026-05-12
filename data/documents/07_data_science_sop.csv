@@ -1,0 +1,25 @@
+Process,Step,Description,Owner,Duration
+Data Collection,1,Identify and catalog all data sources (databases, APIs, files),Data Engineer,1-2 days
+Data Collection,2,Validate data access permissions and compliance requirements,Data Governance,1 day
+Data Collection,3,Extract raw data and store in data lake or staging environment,Data Engineer,1-3 days
+Data Preprocessing,4,Profile data to understand distributions, types, and missing values,Data Scientist,1 day
+Data Preprocessing,5,Handle missing values (imputation, deletion, or flagging),Data Scientist,0.5 days
+Data Preprocessing,6,Remove or correct outliers and erroneous records,Data Scientist,0.5 days
+Data Preprocessing,7,Encode categorical variables (one-hot, ordinal, target encoding),Data Scientist,0.5 days
+Data Preprocessing,8,Scale numerical features (StandardScaler, MinMaxScaler),Data Scientist,0.5 days
+Feature Engineering,9,Perform exploratory data analysis and correlation analysis,Data Scientist,1-2 days
+Feature Engineering,10,Create new features based on domain knowledge,Domain Expert,1-2 days
+Feature Engineering,11,Apply dimensionality reduction if feature count is very high,Data Scientist,1 day
+Model Development,12,Split data into train, validation, and test sets (70/15/15),Data Scientist,0.5 days
+Model Development,13,Establish baseline model performance,Data Scientist,0.5 days
+Model Development,14,Train candidate models and compare performance,Data Scientist,2-5 days
+Model Development,15,Perform hyperparameter tuning using cross-validation,Data Scientist,1-3 days
+Model Evaluation,16,Evaluate final model on held-out test set,Data Scientist,1 day
+Model Evaluation,17,Generate performance report with metrics and visualizations,Data Scientist,1 day
+Model Evaluation,18,Conduct fairness and bias analysis,Data Scientist,1 day
+Deployment,19,Containerize model using Docker,ML Engineer,1-2 days
+Deployment,20,Deploy model to staging environment and run integration tests,ML Engineer,1-2 days
+Deployment,21,Deploy to production with monitoring and alerting,ML Engineer,1 day
+Monitoring,22,Monitor model performance and data drift weekly,ML Engineer,Ongoing
+Monitoring,23,Retrain model when performance degrades below threshold,Data Scientist,As needed
+Documentation,24,Document model card with performance, limitations, and usage,Data Scientist,1 day

@@ -1,0 +1,83 @@
+LARGE LANGUAGE MODEL PROMPTING GUIDE
+
+1. INTRODUCTION TO PROMPTING
+Prompt engineering is the practice of designing inputs (prompts) to elicit desired outputs from large language models. A well-crafted prompt can significantly improve the quality, accuracy, and format of LLM responses without any changes to the underlying model.
+
+2. PROMPTING TECHNIQUES
+
+2.1 Zero-Shot Prompting
+The model is given a task with no examples.
+Example: "Classify the sentiment of this review as positive, negative, or neutral: 'The product exceeded my expectations.'"
+Best for: Simple, well-defined tasks that LLMs have seen in training.
+
+2.2 Few-Shot Prompting
+One or more examples (demonstrations) are provided in the prompt to guide the model.
+Example: Providing 3 labeled examples before asking the model to classify a new input.
+Best for: Tasks where output format is critical, or the task is unusual.
+
+2.3 Chain-of-Thought (CoT) Prompting
+The model is asked to reason step-by-step before arriving at the final answer.
+Trigger phrase: "Let's think step by step."
+Best for: Mathematical reasoning, multi-step problems, logical deduction.
+Zero-shot CoT: Adding "Think step by step" to any prompt.
+Few-shot CoT: Providing examples with reasoning chains.
+
+2.4 ReAct Prompting (Reasoning + Acting)
+Combines reasoning and tool use. The model alternates between Thought, Action, and Observation steps.
+Pattern: Thought → Action (tool call) → Observation (tool result) → Thought → ...
+Best for: Agentic tasks requiring external tools.
+
+2.5 Self-Consistency
+Run the same prompt multiple times, then take the majority vote on the final answer.
+Best for: Reasoning tasks where accuracy is critical.
+
+2.6 Tree of Thoughts (ToT)
+The model explores multiple reasoning paths simultaneously, evaluating and selecting the best.
+Best for: Complex problem-solving requiring exploration.
+
+3. SYSTEM PROMPTS
+A system prompt sets the model's persona, constraints, and behavior at a high level.
+Key elements of a good system prompt:
+- Role definition: "You are a medical document analyst."
+- Constraints: "Only answer questions based on the provided documents."
+- Output format: "Always respond in JSON format."
+- Tone: "Be concise and professional."
+
+4. PROMPT STRUCTURE BEST PRACTICES
+- Be specific: Vague prompts produce vague outputs.
+- Provide context: Give the model all relevant background.
+- Specify format: If you need JSON, markdown, or bullet points, say so explicitly.
+- Use delimiters: Use triple backticks, XML tags, or --- to separate instructions from content.
+- Instruct the model to say "I don't know": Prevents hallucination. "If you don't know, say so."
+- Iterate: Treat prompting as an empirical process — test and refine.
+
+5. HALLUCINATION MITIGATION
+Hallucination occurs when LLMs generate confident but factually incorrect statements. Mitigation strategies:
+- Retrieval Augmentation: Ground responses in retrieved documents (RAG).
+- Explicit instruction: "Only use information provided in the context. Do not add information not present."
+- Citation enforcement: "Cite the source of every fact you state."
+- Temperature reduction: Lower temperature (0.0–0.2) produces more deterministic, less creative outputs.
+- Self-verification: Ask the model to verify its answer against the context.
+
+6. TOKEN LIMITS AND CONTEXT WINDOWS
+LLMs have a maximum context window (sequence of tokens they can process at once):
+- GPT-3.5-turbo: 16K tokens
+- GPT-4o: 128K tokens
+- Claude 3.5 Sonnet: 200K tokens
+- Gemini 1.5 Pro: 1M tokens
+A token is approximately 4 characters or 0.75 words in English.
+Strategies for long contexts: chunking, summarization, retrieval, hierarchical processing.
+
+7. ADVANCED TECHNIQUES
+
+7.1 Retrieval-Augmented Generation (RAG)
+Retrieves relevant documents and injects them into the prompt as context. Addressed in detail in the RAG document.
+
+7.2 Prompt Chaining
+Breaking complex tasks into multiple sequential LLM calls, where each output becomes the next input.
+
+7.3 Constitutional AI
+The model is given a set of principles and asked to critique and revise its own responses based on those principles.
+
+7.4 Function/Tool Calling
+Modern LLMs (GPT-4, Claude 3) can call external functions or APIs, enabling them to retrieve information, perform calculations, or take actions.

@@ -1,0 +1,79 @@
+VECTOR DATABASES: ARCHITECTURE AND COMPARISON
+
+1. WHAT IS A VECTOR DATABASE?
+A vector database is a specialized database designed to store, index, and query high-dimensional vectors (embeddings). Unlike traditional databases that store structured data in tables, vector databases efficiently handle similarity search — finding the most similar vectors to a given query vector.
+
+Vector databases are the core infrastructure component of modern AI applications including RAG pipelines, semantic search, recommendation systems, and image/audio retrieval.
+
+2. WHY NOT TRADITIONAL DATABASES?
+Traditional databases (PostgreSQL, MySQL) use exact matching and cannot efficiently perform similarity search over high-dimensional spaces. The "curse of dimensionality" makes naive nearest-neighbor search O(n) per query — unusable at scale. Vector databases use Approximate Nearest Neighbor (ANN) algorithms to achieve sub-linear query time with controlled accuracy loss.
+
+3. KEY VECTOR DATABASE CONCEPTS
+
+3.1 Embeddings
+Numerical representations (vectors) of data (text, images, audio). An embedding model maps an input to a fixed-dimensional vector (e.g., 384 or 1536 dimensions) where semantically similar inputs are close in vector space.
+
+3.2 Index Types
+- Flat Index (Brute Force): Exact search; computes distance to every stored vector. Accurate but slow at scale. Used in small datasets.
+- IVF (Inverted File Index): Partitions vector space into Voronoi cells; only searches the nearest cells. Faster but approximate.
+- HNSW (Hierarchical Navigable Small World): Graph-based index; very fast, high recall. Used by most production systems (FAISS, ChromaDB, Qdrant).
+- PQ (Product Quantization): Compresses vectors to reduce memory; trades accuracy for efficiency.
+
+3.3 Distance Metrics
+- Cosine Similarity: Measures angle between vectors; most popular for NLP tasks.
+- Euclidean (L2) Distance: Geometric distance; used for image embeddings.
+- Dot Product: Fast when vectors are normalized; often equivalent to cosine similarity.
+
+4. MAJOR VECTOR DATABASE SOLUTIONS
+
+4.1 FAISS (Facebook AI Similarity Search)
+- Type: Library (not a standalone database)
+- Developed by: Meta AI Research
+- Language: C++ with Python bindings
+- Key features: Extremely fast, CPU and GPU support, multiple index types (Flat, IVF, HNSW, PQ)
+- Limitations: No metadata filtering, no persistence (must save/load manually), no server — runs in-process
+- Best for: Research, batch processing, when you control the full stack
+
+4.2 ChromaDB
+- Type: Embedded and client-server vector database
+- Open source: Yes (Apache 2.0)
+- Key features: Easy Python API, built-in persistence, metadata filtering, runs embedded (no server needed)
+- Limitations: Not designed for distributed scale
+- Best for: Development, prototyping, small to medium production
+
+4.3 Pinecone
+- Type: Managed cloud vector database (SaaS)
+- Key features: Fully managed, horizontal scaling, real-time updates, hybrid search, metadata filtering
+- Limitations: Cost, proprietary (vendor lock-in)
+- Best for: Production applications requiring scale without infrastructure management
+
+4.4 Weaviate
+- Type: Open-source vector database with cloud offering
+- Key features: GraphQL API, built-in vectorization (text2vec modules), hybrid search, multi-tenancy, modules for NLP, image, and multi-modal
+- Best for: Applications needing hybrid search and rich querying
+
+4.5 Qdrant
+- Type: Open-source vector database (Rust-based)
+- Key features: High performance, advanced filtering, payload indexing, Rust client
+- Best for: High-performance production deployments
+
+4.6 Milvus
+- Type: Open-source distributed vector database
+- Key features: Horizontal scaling, multi-tenancy, multiple index types, strong consistency
+- Best for: Enterprise scale, large-scale AI applications
+
+5. CHOOSING A VECTOR DATABASE
+For prototyping / small datasets: ChromaDB (simplest setup, persistent, embedded)
+For research / ML pipelines: FAISS (fastest, most flexible)
+For production at scale: Pinecone (managed), Qdrant (open-source, high perf), or Weaviate
+For enterprise / distributed: Milvus
+
+6. METADATA FILTERING
+Most modern vector databases support metadata filtering — combining vector similarity search with structured filtering. Example: find documents similar to query AND published after 2023 AND of type "research_paper". This is crucial for production RAG systems to narrow retrieval scope.
+
+7. EMBEDDING MODELS FOR VECTOR DATABASES
+- OpenAI text-embedding-3-small: 1536 dims, very high quality, requires API key
+- OpenAI text-embedding-3-large: 3072 dims, highest OpenAI quality
+- sentence-transformers/all-MiniLM-L6-v2: 384 dims, fast, free, good quality
+- BAAI/bge-large-en-v1.5: 1024 dims, top open-source performance
+- Cohere embed-v3: Commercial alternative to OpenAI

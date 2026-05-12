@@ -1,0 +1,62 @@
+NATURAL LANGUAGE PROCESSING (NLP): AN OVERVIEW
+
+1. INTRODUCTION
+Natural Language Processing (NLP) is a branch of artificial intelligence concerned with the interaction between computers and human language. NLP enables machines to read, understand, and generate human language in a meaningful way. The field combines computational linguistics with machine learning and deep learning.
+
+2. CORE NLP TASKS
+- Tokenization: Splitting text into individual words or subwords (tokens).
+- Part-of-Speech (POS) Tagging: Labeling each token with its grammatical role (noun, verb, adjective, etc.).
+- Named Entity Recognition (NER): Identifying and classifying entities like persons, organizations, locations, and dates.
+- Dependency Parsing: Analyzing grammatical structure to find relationships between words.
+- Sentiment Analysis: Determining the emotional tone (positive, negative, neutral) of text.
+- Text Classification: Categorizing documents into predefined categories (e.g., spam detection, topic classification).
+- Machine Translation: Automatically translating text from one language to another.
+- Text Summarization: Generating concise summaries of longer documents (extractive vs. abstractive).
+- Question Answering: Building systems that answer questions in natural language.
+- Coreference Resolution: Identifying when different words refer to the same entity.
+
+3. KEY CONCEPTS
+
+3.1 Embeddings
+Word embeddings are dense vector representations that capture semantic meaning.
+- Word2Vec (2013, Google): Learns word associations from large text corpora. Two architectures: CBOW and Skip-gram.
+- GloVe (2014, Stanford): Global Vectors for Word Representation; captures global co-occurrence statistics.
+- FastText (2016, Facebook): Represents words as bags of character n-grams; handles out-of-vocabulary words.
+- Contextual Embeddings: Unlike static embeddings, these vary based on context (ELMo, BERT, GPT).
+
+3.2 The Transformer Architecture (2017)
+Introduced in "Attention Is All You Need" (Vaswani et al., 2017), transformers revolutionized NLP.
+Key components:
+- Self-Attention Mechanism: Allows the model to weigh the importance of different words relative to each other.
+- Multi-Head Attention: Multiple attention heads capture different relationships simultaneously.
+- Positional Encoding: Injects information about word position since transformers have no recurrence.
+- Feed-Forward Networks: Applied to each position independently after attention.
+- Layer Normalization and Residual Connections: Stabilize training of deep networks.
+
+3.3 Pre-trained Language Models (PLMs)
+BERT (Bidirectional Encoder Representations from Transformers, 2018, Google): Pre-trained using Masked Language Modeling (MLM) and Next Sentence Prediction (NSP). Bidirectional — reads text in both directions.
+GPT Series (OpenAI): Generative Pre-trained Transformer. Unidirectional; trained to predict the next token. GPT-3 (175B parameters) demonstrated remarkable few-shot learning. GPT-4 introduced multimodal capabilities.
+T5 (Google): Frames all NLP tasks as text-to-text problems.
+LLaMA (Meta): Open-source large language models widely used in research.
+
+4. LARGE LANGUAGE MODELS (LLMs)
+LLMs are neural networks with billions of parameters trained on massive text corpora. Capabilities include:
+- In-context learning (zero-shot, few-shot prompting)
+- Chain-of-thought reasoning
+- Code generation
+- Instruction following
+Key challenges: hallucinations (generating plausible-sounding but false information), context window limits, computational cost, and alignment with human values.
+
+5. NLP APPLICATIONS
+Healthcare: Clinical note analysis, drug interaction detection, medical literature summarization.
+Finance: Earnings call analysis, sentiment-based trading signals, document classification.
+Legal: Contract review, legal research, document summarization.
+Customer Service: Chatbots, ticket classification, response generation.
+Education: Automated essay scoring, personalized tutoring, language learning.
+
+6. EVALUATION METRICS
+BLEU (Bilingual Evaluation Understudy): Measures n-gram overlap; used for machine translation.
+ROUGE (Recall-Oriented Understudy for Gisting Evaluation): Used for text summarization.
+Perplexity: Measures how well a language model predicts a sample; lower is better.
+BERTScore: Computes semantic similarity using BERT embeddings.
+Human Evaluation: Often the gold standard for generative tasks.

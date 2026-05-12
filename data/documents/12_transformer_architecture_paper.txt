@@ -1,0 +1,93 @@
+RESEARCH SUMMARY: THE TRANSFORMER ARCHITECTURE
+Based on "Attention Is All You Need" — Vaswani et al., 2017 (Google Brain / Google Research)
+
+ABSTRACT SUMMARY
+The Transformer is a sequence-to-sequence model that relies entirely on attention mechanisms, dispensing with recurrence and convolutions. The model achieves superior quality on machine translation tasks while being significantly more parallelizable and requiring substantially less training time than previous architectures.
+
+1. MOTIVATION
+Prior to the Transformer, the dominant approaches to sequence modeling used Recurrent Neural Networks (RNNs), Long Short-Term Memory (LSTMs), and Gated Recurrent Units (GRUs). These architectures have two fundamental problems:
+1. Sequential computation: Hidden state at position t depends on position t-1, preventing parallelization during training.
+2. Long-range dependencies: Even with LSTMs, modeling dependencies between distant positions is difficult due to the length of paths between them.
+
+Attention mechanisms had been used alongside recurrent models, but the Transformer was the first model to use attention exclusively for both encoding and decoding.
+
+2. MODEL ARCHITECTURE
+
+2.1 Overall Structure
+The Transformer follows an encoder-decoder structure:
+- Encoder: Maps an input sequence (x₁, ..., xₙ) to a sequence of continuous representations z = (z₁, ..., zₙ).
+- Decoder: Given z, generates an output sequence (y₁, ..., yₘ) one symbol at a time (autoregressive).
+
+Both encoder and decoder are composed of stacks of identical layers (N=6 in the original paper).
+
+2.2 Scaled Dot-Product Attention
+The attention function maps a query Q and a set of key-value (K, V) pairs to an output.
+Formula: Attention(Q, K, V) = softmax(QK^T / √d_k) V
+- Q (Query): What the current position is looking for.
+- K (Key): What each position has to offer.
+- V (Value): The actual content at each position.
+- √d_k scaling: Prevents dot products from growing large in magnitude and causing vanishing gradients in the softmax.
+
+Computational complexity: O(n² · d) per layer, where n is sequence length and d is dimension.
+
+2.3 Multi-Head Attention
+Instead of one attention function, multi-head attention runs h parallel attention functions on linearly projected versions of Q, K, V.
+Formula: MultiHead(Q, K, V) = Concat(head₁, ..., headₕ) W^O
+Each head: headᵢ = Attention(QW_i^Q, KW_i^K, VW_i^V)
+
+Benefits: Different heads can attend to different aspects of the input simultaneously (e.g., syntactic vs. semantic relationships).
+Original paper uses h=8 heads with d_model=512, giving d_k = d_v = 64 per head.
+
+2.4 Positional Encoding
+Since the Transformer has no recurrence or convolution, it must explicitly inject positional information.
+Formula: PE(pos, 2i) = sin(pos / 10000^(2i/d_model))
+         PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
+These sinusoidal encodings have the property that relative positions can be expressed as a linear function, making them generalizable to sequence lengths not seen during training.
+
+2.5 Feed-Forward Networks
+Each encoder/decoder layer contains a fully connected feed-forward network applied identically to each position.
+Formula: FFN(x) = max(0, xW₁ + b₁)W₂ + b₂ (ReLU activation)
+In the original paper: d_model = 512, d_ff = 2048.
+
+2.6 Layer Normalization and Residual Connections
+Each sub-layer (attention or FFN) is followed by:
+output = LayerNorm(x + Sublayer(x))
+This is the "Add & Norm" operation. Residual connections enable gradient flow through deep networks; layer normalization stabilizes training.
+
+2.7 Encoder-Decoder Attention
+In the decoder, a third type of attention (cross-attention) allows each decoder position to attend over all encoder positions. Queries come from the decoder, keys and values from the encoder output.
+
+2.8 Masking
+Decoder uses causal masking (future positions set to -∞ before softmax) to ensure that prediction at position i depends only on positions 1 to i-1. This enables autoregressive generation at inference time.
+
+3. TRAINING
+
+Dataset: WMT 2014 English-German (4.5M sentence pairs) and English-French (36M pairs).
+Hardware: 8 NVIDIA P100 GPUs.
+Training time: 12 hours (base model), 3.5 days (big model).
+Optimizer: Adam (β₁=0.9, β₂=0.98, ε=10⁻⁹).
+Learning rate schedule: Warmup for 4000 steps, then inverse square root decay.
+Regularization: Dropout (P=0.1) on sub-layer outputs, embeddings, and attention weights. Label smoothing (ε=0.1).
+
+4. RESULTS
+
+English-German Translation:
+- Transformer (big): 28.4 BLEU — new state of the art at the time.
+- Previous best: 26.36 BLEU (ensemble of models).
+
+English-French Translation:
+- Transformer (big): 41.0 BLEU — exceeds all previous single models.
+
+5. VARIANTS AND DESCENDANTS
+The Transformer architecture spawned a large family of models:
+- BERT (2018, Google): Encoder-only; bidirectional; pre-trained on MLM and NSP.
+- GPT (2018, OpenAI): Decoder-only; unidirectional; generative pre-training.
+- T5 (2019, Google): Encoder-decoder; frames all NLP as text-to-text.
+- Vision Transformer / ViT (2020, Google): Applies transformer to image patches.
+- DALL-E (2021, OpenAI): Transformer for text-to-image generation.
+- GPT-4 (2023, OpenAI): Large multimodal transformer; details not fully published.
+
+6. IMPACT
+The Transformer is arguably the most influential neural network architecture in history. It forms the backbone of all state-of-the-art NLP systems, most computer vision systems, and increasingly multi-modal and scientific AI applications. The attention mechanism's ability to capture global context without recurrence or convolution, combined with massive parallelizability during training, enabled scaling to the billion-parameter models that define modern AI.
+
+Citation: Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., ... & Polosukhin, I. (2017). Attention is all you need. Advances in neural information processing systems, 30.

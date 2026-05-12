@@ -1,0 +1,157 @@
+PYTHON BEST PRACTICES FOR DATA SCIENCE AND AI ENGINEERING
+
+1. PROJECT STRUCTURE
+A well-organized Python project improves collaboration, testability, and maintainability.
+
+Recommended structure:
+project/
+├── src/                  # All application source code
+│   └── package_name/
+├── tests/                # Unit and integration tests
+├── data/                 # Data files (small samples only; large datasets in cloud storage)
+├── notebooks/            # Exploratory Jupyter notebooks (not production code)
+├── docs/                 # Documentation
+├── config.py             # Configuration (no hardcoded secrets)
+├── requirements.txt      # Pinned dependencies
+├── pyproject.toml        # Build and tool configuration
+├── .env.example          # Environment variable template (never commit .env)
+├── .gitignore            # Exclude venv, __pycache__, .env, model artifacts
+└── README.md             # Project overview and setup instructions
+
+2. DEPENDENCY MANAGEMENT
+
+2.1 Use Virtual Environments
+Always isolate project dependencies. Options: venv (standard library), conda, poetry, uv (modern, fast).
+```bash
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+```
+
+2.2 Pin Dependencies
+Use exact versions in requirements.txt to ensure reproducibility: `numpy==1.26.4` not `numpy>=1.0`.
+Separate dev dependencies (testing, linting) from production ones.
+
+2.3 Never Commit Secrets
+Use python-dotenv with a .env file for API keys and passwords.
+Always add .env to .gitignore.
+Rotate any API key accidentally committed immediately.
+
+3. CODE QUALITY
+
+3.1 Type Hints (PEP 484)
+Add type annotations to all functions. Enables static analysis, IDEs, and documentation.
+```python
+def chunk_text(text: str, size: int = 1000) -> list[str]: ...
+```
+
+3.2 Linting and Formatting
+Use ruff (modern, fast) or flake8 + black. Configure in pyproject.toml. Run in CI.
+
+3.3 Naming Conventions (PEP 8)
+- Functions and variables: snake_case
+- Classes: PascalCase
+- Constants: UPPER_SNAKE_CASE
+- Private: _leading_underscore
+
+3.4 Documentation
+- Module docstring: Purpose of the module.
+- Function docstring: What it does, parameters, return value, exceptions.
+- Avoid over-commenting; good code is self-documenting.
+
+4. LOGGING
+Use the standard logging module. Never use print() in production code.
+```python
+import logging
+logger = logging.getLogger(__name__)
+logger.info("Processing %d documents", len(docs))
+```
+Configure logging at application entry points, not in library code.
+Log at appropriate levels: DEBUG (development detail), INFO (normal operations), WARNING (unexpected but recoverable), ERROR (failures), CRITICAL (system-level failures).
+
+5. ERROR HANDLING
+
+5.1 Be Specific
+Catch specific exceptions, not bare `except:` or `except Exception:`.
+```python
+try:
+    data = json.loads(text)
+except json.JSONDecodeError as e:
+    logger.error("Invalid JSON: %s", e)
+    raise
+```
+
+5.2 Fail Fast
+Validate inputs at the boundaries of your system (API entry points, file loading). Internal functions can trust their inputs.
+
+5.3 Custom Exceptions
+Define domain-specific exceptions for better error handling:
+```python
+class DocumentLoadError(Exception): ...
+class EmbeddingError(Exception): ...
+```
+
+6. TESTING
+
+6.1 Unit Tests
+Use pytest. Test each function/class in isolation. Mock external dependencies (API calls, file I/O).
+```bash
+pytest tests/ -v --cov=src --cov-report=term-missing
+```
+
+6.2 Test Naming Convention
+test_{what_it_does}_{expected_outcome}
+Example: test_chunk_documents_respects_max_size
+
+6.3 Fixtures
+Use pytest fixtures for shared setup (e.g., creating a temporary directory, initializing a test database).
+
+6.4 Property-Based Testing
+Use hypothesis for generating edge cases automatically. Especially useful for string processing, parsing, and mathematical operations.
+
+7. PERFORMANCE
+
+7.1 Profiling Before Optimizing
+Profile first with cProfile or line_profiler. Never optimize without measuring.
+
+7.2 Vectorization
+Use NumPy/Pandas vectorized operations instead of Python loops for numerical computation.
+
+7.3 Generator Expressions
+Use generators for large data pipelines to avoid loading everything into memory.
+```python
+chunks = (chunk for doc in documents for chunk in split(doc))
+```
+
+7.4 Caching
+Use functools.lru_cache for pure functions with repeated calls.
+Use joblib.Memory for caching expensive computation to disk.
+
+8. WORKING WITH DATA
+
+8.1 Pandas Best Practices
+- Use vectorized operations, not apply() with Python functions where possible.
+- Specify dtypes explicitly when reading CSVs (dtype={'col': 'int32'}).
+- Avoid iterrows() — use itertuples() or vectorized operations.
+- Use chunked reading (chunksize) for large files.
+
+8.2 Data Validation
+Use pydantic or pandera to validate data schemas at system boundaries.
+
+8.3 Reproducibility
+- Set all random seeds: random, numpy, torch, transformers.
+- Version your datasets (DVC or simple MD5 checksums).
+- Pin library versions.
+
+9. JUPYTER NOTEBOOKS
+Notebooks are for exploration, not production. Rules:
+- Keep notebooks short and focused.
+- Restart kernel and run all cells before committing.
+- Do not store large outputs or model weights in notebooks.
+- Extract reusable code into .py modules.
+- Name clearly: 01_eda_customer_data.ipynb, not Untitled.ipynb.
+
+10. CONFIGURATION MANAGEMENT
+- All configuration via environment variables or config files. No hardcoded values.
+- Use python-dotenv for .env files in development.
+- Use a typed config object (dataclass or pydantic BaseSettings) so misconfiguration fails immediately at startup.
+- Provide a .env.example with all required variables documented.

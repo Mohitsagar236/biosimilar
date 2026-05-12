@@ -1,0 +1,30 @@
+ARTIFICIAL INTELLIGENCE FUNDAMENTALS
+
+1. WHAT IS ARTIFICIAL INTELLIGENCE?
+Artificial Intelligence (AI) refers to the simulation of human intelligence processes by computer systems. These processes include learning (acquiring information and rules for using the information), reasoning (using rules to reach approximate or definite conclusions), and self-correction. AI was formally founded as a discipline at the Dartmouth Conference in 1956 by John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon.
+
+2. MAJOR BRANCHES OF AI
+- Machine Learning (ML): A subset of AI where systems learn from data without being explicitly programmed. ML algorithms build mathematical models based on sample data to make predictions or decisions.
+- Natural Language Processing (NLP): Enables computers to understand, interpret, and generate human language. Applications include chatbots, translation, sentiment analysis, and text summarization.
+- Computer Vision: Allows machines to interpret and understand visual information from the world, including image classification, object detection, and facial recognition.
+- Robotics: Combines AI with mechanical engineering to create intelligent machines that can perform tasks in the physical world.
+- Expert Systems: Computer programs that emulate the decision-making ability of a human expert in a specific domain.
+
+3. NARROW AI VS GENERAL AI
+Narrow AI (Weak AI): Designed for a specific task — examples include Siri, chess engines, and spam filters. All current AI systems are narrow AI.
+General AI (Strong AI): A hypothetical system that can perform any intellectual task that a human can. It does not yet exist.
+Artificial Superintelligence (ASI): Hypothetical AI surpassing human intelligence in all domains — remains theoretical.
+
+4. KEY AI CONCEPTS
+- Training Data: The dataset used to teach a model. Larger and higher-quality datasets generally produce better models.
+- Model: A mathematical representation of a real-world process, learned from data.
+- Inference: Using a trained model to make predictions on new data.
+- Overfitting: When a model learns the training data too well, including its noise, and performs poorly on new data.
+- Underfitting: When a model is too simple to capture the patterns in the data.
+- Bias-Variance Tradeoff: The balance between a model's flexibility (variance) and its tendency to make systematic errors (bias).
+
+5. AI IN INDUSTRY
+AI is transforming industries including healthcare (disease diagnosis, drug discovery), finance (fraud detection, algorithmic trading), retail (recommendation systems, inventory management), manufacturing (predictive maintenance, quality control), and transportation (autonomous vehicles, route optimization).
+
+6. ETHICAL CONSIDERATIONS
+Key ethical issues in AI include: algorithmic bias (AI systems can perpetuate or amplify social biases), privacy (AI requires massive data collection), transparency (many models are "black boxes"), accountability (unclear who is responsible when AI makes harmful decisions), and job displacement (automation replacing human workers).
