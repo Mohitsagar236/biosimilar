@@ -7,7 +7,7 @@ ChromaDB persists automatically; FAISS saves/loads from FAISS_INDEX_PATH.
 import logging
 import os
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Set
 
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
@@ -33,6 +33,10 @@ class _ChromaBackend:
 
     def add_documents(self, documents: List[Document]) -> None:
         self._store.add_documents(documents)
+        try:
+            self._store.persist()
+        except Exception:
+            pass
 
     def similarity_search(self, query: str, k: int) -> List[Document]:
         count = self._store._collection.count()
@@ -82,6 +86,15 @@ class _ChromaBackend:
         for content, meta in zip(documents, metadatas):
             docs.append(Document(page_content=content, metadata=meta or {}))
         return docs
+
+    def list_content_hashes(self) -> Set[str]:
+        result = self._store._collection.get(include=["metadatas"])
+        metadatas = result["metadatas"] or []
+        return {
+            meta.get("content_hash")
+            for meta in metadatas
+            if isinstance(meta, dict) and meta.get("content_hash")
+        }
 
     def delete_source(self, source: str) -> int:
         before = self.count()
@@ -151,6 +164,15 @@ class _FAISSBackend:
             for doc in self._store.docstore._dict.values()
         }
         return sorted(sources)
+
+    def list_content_hashes(self) -> Set[str]:
+        if self._store is None:
+            return set()
+        return {
+            doc.metadata.get("content_hash")
+            for doc in self._store.docstore._dict.values()
+            if doc.metadata.get("content_hash")
+        }
 
     def get_document_stats(self) -> List[dict]:
         if self._store is None:
@@ -224,6 +246,9 @@ class VectorDatabase:
 
     def list_sources(self) -> List[str]:
         return self._backend.list_sources()
+
+    def list_content_hashes(self) -> Set[str]:
+        return self._backend.list_content_hashes()
 
     def get_document_stats(self) -> List[dict]:
         return self._backend.get_document_stats()

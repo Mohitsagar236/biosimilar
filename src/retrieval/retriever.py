@@ -18,6 +18,12 @@ def retrieve(
 ) -> List[Document]:
     if method == "mmr":
         docs = db.mmr_search(query, k=k)
+        if not docs:
+            logger.info(
+                "MMR search returned no docs for query %r; falling back to similarity search.",
+                query[:60],
+            )
+            docs = db.similarity_search(query, k=k)
     else:
         docs = db.similarity_search(query, k=k)
     logger.info("Retrieved %d chunks for query: %r", len(docs), query[:60])

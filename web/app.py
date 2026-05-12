@@ -19,7 +19,7 @@ from src.embeddings.embedding_generator import get_embeddings
 from src.ingestion.chunker import chunk_documents
 from src.ingestion.document_loader import load_document
 from src.ingestion.preprocessor import preprocess_documents
-from src.utils.helpers import setup_logging
+from src.utils.helpers import file_hash, setup_logging
 from src.vectorstore.vector_db import VectorDatabase
 
 setup_logging("INFO")
@@ -79,7 +79,7 @@ def _process_file(f) -> tuple[str | None, str | None]:
         tmp_path = tmp_dir / f.filename
         f.save(str(tmp_path))
 
-        raw = load_document(tmp_path)
+        raw = load_document(tmp_dir / f.filename)
         if not raw:
             return f.filename, "could not extract any text"
 
@@ -91,20 +91,18 @@ def _process_file(f) -> tuple[str | None, str | None]:
         if not chunks:
             return f.filename, "chunking produced 0 chunks"
 
-        # Normalize source metadata to just the filename so deduplication and
-        # the Documents panel work correctly regardless of temp directory path.
+        content_hash = file_hash(tmp_path)
         for chunk in chunks:
             chunk.metadata["source"] = f.filename
+            chunk.metadata["content_hash"] = content_hash
 
-        # Skip if already ingested (filename-based deduplication)
-        existing = set(_db.list_sources())
-        new_chunks = [c for c in chunks if c.metadata.get("source") not in existing]
-        if not new_chunks:
-            logger.info("Skipping already-ingested file: %s", f.filename)
+        existing_hashes = set(_db.list_content_hashes())
+        if content_hash in existing_hashes:
+            logger.info("Skipping already-ingested file by content hash: %s", f.filename)
             return f.filename, "already ingested"
 
         before = _db.count()
-        _db.add_documents(new_chunks)
+        _db.add_documents(chunks)
         after = _db.count()
         if after <= before:
             return f.filename, "chunks produced but none added to DB"

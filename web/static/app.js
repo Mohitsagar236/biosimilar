@@ -163,7 +163,7 @@ let voiceTranscript = '';
 
 /* Voice OUTPUT (TTS) state */
 let isSpeaking   = false;
-let ttsEnabled   = true;
+let ttsEnabled   = false; // disable automatic text-to-speech for chat responses by default
 let ttsUtterance = null;
 
 /* Voice MODE state */
